@@ -1,22 +1,36 @@
 {
-  "name": "resumestore",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Ritik Srivastava",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "chalk": "^4.0.0",
-    "crypto-js": "^4.0.0",
-    "dotenv": "^8.1.0",
-    "ejs": "^3.1.2",
-    "express": "^4.17.1",
-    "ip": "^1.1.5",
-    "mongoose": "^5.9.10",
-    "validator": "^13.1.1"
+ "name": "resumestore",
+ "version": "1.0.0",
+ "description": "",
+ "main": "index.js",
+ "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1"
+ },
+ "author": "Ritik Srivastava",
+ "license": "ISC",
+ "dependencies": {
+  "body-parser": "^1.19.0",
+  "chalk": "^4.0.0",
+  "crypto-js": "^4.0.0",
+  "dotenv": "^8.1.0",
+  "ejs": "^3.1.2",
+  "express": "^4.17.1",
+  "ip": "^1.1.5",
+  "mongoose": "^5.9.10",
+  "node-sass": "^4.14.1",
+  "validator": "^13.1.1"
+ },
+ "nodemonConfig": {
+  "verbose": false,
+  "restartable": "r",
+  "ignore": [
+   ".git/*",
+   "public/*"
+  ],
+  "ext": "js,json",
+  "events": {
+   "start": "npm run watch-scss",
+   "restart": "osascript -e 'display notification \"'$FILENAME'\" with title \"Unite Console\" subtitle \"App restarted due to file change\"'"
   }
+ }
 }
