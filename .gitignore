@@ -1,3 +1,7 @@
+# Directories
 node_modules/
+public/styles/
+
+# Files
 package-lock.json
 .env
