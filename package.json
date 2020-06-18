@@ -4,7 +4,9 @@
  "description": "",
  "main": "index.js",
  "scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1"
+	"build-scss": "node-sass scss/style.scss -o public/styles --quiet --output-style expanded --indent-type tab --indent-width 1",
+	"watch-scss": "npm run build-scss & npm run build-scss -- -w",
+	"start": "npm run watch-scss & node index.js"
  },
  "author": "Ritik Srivastava",
  "license": "ISC",
