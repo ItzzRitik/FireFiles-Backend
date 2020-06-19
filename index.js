@@ -44,7 +44,7 @@ function isAuthenticated (req, res, next) {
 app.post('/login', (req, res) => {
 	passport.authenticate('local', function (err, user, info) {   
 		if (user) {
-			req.login(user, function(err) {
+			req.login(user, (err) => {
 				if (err) return res.status(500).send('Apologies! Unexpected error occurred while creating account!');
 				return res.status(200).redirect('/dashboard');
 			});
@@ -110,6 +110,14 @@ app.get('/login', (req, res) => {
 	}
 
 	return res.render('index');
+});
+
+app.get('/logout', (req, res) => {
+	req.logout();
+	req.session.destroy(function() {
+		res.clearCookie('connect.sid');
+		res.redirect('/');
+	});
 });
 
 app.get('/', isAuthenticated, (req, res) => {
