@@ -4,53 +4,50 @@
 	<meta name="theme-color" content="#000000" />
 	<head>
 		<title>Resume Store</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
+		<link rel="stylesheet" href="/lib/@fortawesome/fontawesome-free/css/all.min.css" />
 		<link rel="stylesheet" href="/public/styles/style.css">
 	</head>
 	<body>
 		<div class="loginPage">
-			<h2>Please login</h2>
 			<div class="mainContainer" id='mainContainer'>
 				<div class="formContainer signUpContainer">
-					<form action="#">
-						<h1>Create Account</h1>
-						<div class="socialContainer">
-							<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-							<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-							<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-						</div>
-						<span>or use your email for registration</span>
-						<input type="text" placeholder="Name" />
-						<input type="email" placeholder="Email" />
-						<input type="password" placeholder="Password" />
-						<button id="signUp">Sign Up</button>
-					</form>
+					<h1>Create Account</h1>
+					<div class="socialContainer">
+						<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+						<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+					</div>
+					<span>or use your email for registration</span>
+					<input id="nameSignUp" type="text" placeholder="Name" />
+					<input id="emailSignUp" type="email" placeholder="Email" />
+					<input id="passwordSignUp" type="password" placeholder="Password" />
+					<button class="signButton" id="signUp">Sign Up</button>
 				</div>
 				<div class="formContainer signInContainer">
-					<form action="#">
-						<h1>Sign in</h1>
-						<div class="socialContainer">
-							<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-							<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-							<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-						</div>
-						<span>or use your account</span>
-						<input type="email" placeholder="Email" />
-						<input type="password" placeholder="Password" />
-						<a href="#">Forgot your password?</a>
-						<button id="signIn">Sign In</button>
-					</form>
+					<h1>Sign in</h1>
+					<div class="socialContainer">
+						<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+						<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+					</div>
+					<span>or use your account</span>
+					<input id="emailLogin" type="email" placeholder="Email" />
+					<input id="passwordLogin" type="password" placeholder="Password" />
+					<a href="#">Forgot your password?</a>
+					<button class="signButton" id="signIn">Sign In</button>
 				</div>
 				<div class="overlayContainer">
 					<div class="overlay">
 						<div class="overlayPanel overlayLeft">
 							<h1>Welcome Back!</h1>
 							<p>To keep connected with us please login with your personal info</p>
-							<button class="ghost" id="signInPage">Sign In</button>
+							<button class="signButton ghost">Sign In</button>
 						</div>
 						<div class="overlayPanel overlayRight">
 							<h1>Hello, Friend!</h1>
 							<p>Enter your personal details and start journey with us</p>
-							<button class="ghost" id="signUpPage">Sign Up</button>
+							<button class="signButton ghost">Sign Up</button>
 						</div>
 					</div>
 				</div>
@@ -58,5 +55,7 @@
 		</div>
 	</body>
 	<script src="/lib/jquery/dist/jquery.min.js"></script>
+	<script src="/lib/@fortawesome/fontawesome-free/js/all.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
 	<script src="/public/scripts/loginPage.js"></script>
 </html>
