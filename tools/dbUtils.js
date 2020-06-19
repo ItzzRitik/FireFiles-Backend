@@ -1,29 +1,12 @@
 require('dotenv').config();
 let passport, loading, mongoCall = 0;
 const mongoose = require('mongoose'),
-	LocalStrategy = require('passport-local').Strategy,
 	chalk = require('chalk'),
 
 	logger = require('./logger'),
 	User = require('../models/user');
 
-const login = (credential, cb) => {
-		User.findOne({ email: credential.email }, function(err, user) {
-			if (err) return cb(err);
-
-			// User doesn't exist
-			if (!user) return cb(null, -1);
-
-			// User found
-			user.comparePassword(credential.password, (err, isMatch) => {
-				if (err) return cb(err);
-				
-				return cb(null, +isMatch);
-			});
-		});
-	},
-
-	signup = (userData, cb) => {
+const signup = (userData, cb) => {
 		User.register(new User({ email: userData.email }), userData.password, (err) => {
 			if (err) return cb(err);
 
@@ -69,9 +52,9 @@ const login = (credential, cb) => {
 
 	initPassport = (passport) => {
 		this.passport = passport;
-		passport.use(new LocalStrategy(User.authenticate()));
+		passport.use(User.createStrategy());
 		passport.serializeUser(User.serializeUser());
 		passport.deserializeUser(User.deserializeUser());
 	};
 
-module.exports = { initPassport, connectMongoDB, consoleLoader, User, login, signup };
+module.exports = { initPassport, connectMongoDB, consoleLoader, User, signup };
