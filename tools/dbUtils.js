@@ -24,35 +24,11 @@ const login = (credential, cb) => {
 	},
 
 	signup = (userData, cb) => {
-		User.register(new User({ username: req.body.username }), req.body.password, function(err, user){
-			if(err){
-				console.log(err);
-				return res.render('register');
-			}
-			passport.authenticate('local')(req, res, function(){
-			   res.redirect('/secret');
-			});
+		User.register(new User({ email: userData.email }), userData.password, (err) => {
+			if (err) return cb(err);
+
+			return cb();
 		});
-
-		// User.find({ email: userData.email }, function(err, users) {
-		// 	if (err) return cb(err);
-
-		// 	// User already exists
-		// 	if (users.length) {
-		// 		return cb(null, 0);
-		// 	}
-			
-		// 	// Creating account
-		// 	User.create({
-		// 		name: userData.name,
-		// 		email: userData.email,
-		// 		password: userData.password
-		// 	}, function(err) {
-		// 		if (err) return cb(err);
-
-		// 		return cb(null, 1);
-		// 	});
-		// });
 	},
 
 	consoleLoader = (msg) => {
