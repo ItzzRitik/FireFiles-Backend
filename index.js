@@ -104,7 +104,7 @@ app.get('/dashboard', isAuthenticated, (req, res) => {
 	res.render('dashboard');
 });
 
-app.get('/login', isAuthenticated, (req, res) => {
+app.get('/login', (req, res) => {
 	if (req.isAuthenticated()) {
 		return res.redirect('/dashboard');
 	}
