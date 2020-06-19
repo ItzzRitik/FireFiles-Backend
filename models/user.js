@@ -20,9 +20,13 @@ let UserSchema = new mongoose.Schema({
 		}
 	}),
 	passwordValidator = (password, cb) => {
-		var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+		var regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 		if (!password.match(regex)) {
-			return cb(password + 'is not a valid password');
+			// Invalid password error
+			return cb({
+				name: 'InvalidPasswordError',
+				message: 'Oops! The password you\'ve entered is not valid'
+			});
 		}
 		return cb();
 	};
@@ -33,8 +37,8 @@ UserSchema.plugin(passportLocalMongoose, {
 	usernameLowerCase: true,
 	passwordValidator: passwordValidator,
 	errorMessages: {
-		IncorrectPasswordError: 'Password incorrect',
-		IncorrectUsernameError: 'There is no account registered with that email',
+		IncorrectPasswordError: 'Oops! The password you\'ve entered is incorrect',
+		IncorrectUsernameError: 'Uh-Uh! Account with this email doesn\'t exist!',
 		UserExistsError: 'Oops! Account with same email already exists! Try logging in or use a different email.'
 	}
 });
