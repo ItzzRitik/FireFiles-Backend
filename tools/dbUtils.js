@@ -1,9 +1,11 @@
 require('dotenv').config();
-let loading, mongoCall = 0;
+let passport, loading, mongoCall = 0;
 const mongoose = require('mongoose'),
+	LocalStrategy = require('passport-local').Strategy,
 	chalk = require('chalk'),
+
 	logger = require('./logger'),
-	User = require('../models/user.js');
+	User = require('../models/user');
 
 const login = (credential, cb) => {
 		User.findOne({ email: credential.email }, function(err, user) {
@@ -22,25 +24,35 @@ const login = (credential, cb) => {
 	},
 
 	signup = (userData, cb) => {
-		User.find({ email: userData.email }, function(err, users) {
-			if (err) return cb(err);
-
-			// User already exists
-			if (users.length) {
-				return cb(null, 0);
+		User.register(new User({ username: req.body.username }), req.body.password, function(err, user){
+			if(err){
+				console.log(err);
+				return res.render('register');
 			}
-			
-			// Creating account
-			User.create({
-				name: userData.name,
-				email: userData.email,
-				password: userData.password
-			}, function(err) {
-				if (err) return cb(err);
-
-				return cb(null, 1);
+			passport.authenticate('local')(req, res, function(){
+			   res.redirect('/secret');
 			});
 		});
+
+		// User.find({ email: userData.email }, function(err, users) {
+		// 	if (err) return cb(err);
+
+		// 	// User already exists
+		// 	if (users.length) {
+		// 		return cb(null, 0);
+		// 	}
+			
+		// 	// Creating account
+		// 	User.create({
+		// 		name: userData.name,
+		// 		email: userData.email,
+		// 		password: userData.password
+		// 	}, function(err) {
+		// 		if (err) return cb(err);
+
+		// 		return cb(null, 1);
+		// 	});
+		// });
 	},
 
 	consoleLoader = (msg) => {
@@ -72,11 +84,18 @@ const login = (credential, cb) => {
 		});
 	},
     
-	connect = (cb) => {
+	connectMongoDB = (cb) => {
 		logger.log(true, 'Connecting to MongoDB Atlas Server');
 		mongoConnect(() => {
 			cb();
 		});
+	},
+
+	initPassport = (passport) => {
+		this.passport = passport;
+		passport.use(new LocalStrategy(User.authenticate()));
+		passport.serializeUser(User.serializeUser());
+		passport.deserializeUser(User.deserializeUser());
 	};
 
-module.exports = { consoleLoader, connect, login, signup };
+module.exports = { initPassport, connectMongoDB, consoleLoader, User, login, signup };
