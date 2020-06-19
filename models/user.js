@@ -21,8 +21,10 @@ let UserSchema = new mongoose.Schema({
 		type: String,
 		required: 'Password is required',
 		match: [/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, '{VALUE} is not a valid password']
-	},
+	}
 });
+
+UserSchema.set('timestamps', true);
 
 UserSchema.pre('save', function (next) {
 	var user = this;
