@@ -11,7 +11,7 @@ $('#signIn').click(function () {
 	http.onreadystatechange = function() {
 		if (http.readyState == XMLHttpRequest.DONE) {
 			new Noty({
-				text: http.responseText,
+				text: (http.status == 200) ? 'Yayy! Successfully logged in!' : http.responseText,
 				type: (http.status == 200) ? 'success' : 'error',
 				theme: notyTheme,
 				layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
@@ -19,13 +19,18 @@ $('#signIn').click(function () {
 			}).show();
 
 			if (http.status == 200) {
-				console.log('Success');
+				setTimeout(function() {
+					window.location = '/dashboard';
+				}, 2000);
 			}
 			else if (http.status == 400) {
-				console.log('Duplicate');
+				// Incorrect password
+			}
+			else if (http.status == 404) {
+				// User not found
 			}
 			else {
-				console.log('Error');
+				// Error occurred
 			}
 		}
 	};
