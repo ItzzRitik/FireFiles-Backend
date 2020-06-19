@@ -32,30 +32,34 @@ app.use(passport.session());
 
 dbUtils.initPassport(passport);
 
-app.post('/login', (req, res) => {
-	let credential = {
-		email: req.body.email,
-		password: req.body.password
-	};
+function isAuthenticated(req, res, next) {
+	console.log(req.isAuthenticated());
+	if (req.isAuthenticated()) {
+		return next();
+	}
+	return res.redirect('/login');
+}
 
-	dbUtils.login(credential, (err, status) => {
-		if (err) {
-			logger.error('Error occurred while logging in', credential.email, err);
-			res.status(500).send('Apologies! Unexpected error occurred while logging in!');
+app.post('/login', (req, res) => {
+	passport.authenticate('local', function (err, user, info) {   
+		if (user) {
+			res.status(200).redirect('/dashboard');
 		}
-		else if (status === 1) {
-			res.status(200).send('Yayy! Successfully logged in!');
+		else if (err) {
+			logger.error('Unexpected error occurred while creating account', err);
+			return res.status(500).send('Apologies! Unexpected error occurred while creating account!');
 		}
-		else if (status === 0) {
-			res.status(401).send('Oops! Password you\'ve entered is incorrect!');
+		else if (info) {
+			// User not found
+			if (info.name === 'IncorrectUsernameError') {
+				return res.status(404).send(info.message);
+			}
+			// Incorrect password
+			else if (info.name === 'IncorrectPasswordError') {
+				return res.status(400).send(info.message);
+			}
 		}
-		else if (status === -1) {
-			res.status(400).send('Uh-Uh! Account with this email doesn\'t exist!');
-		}
-		else {
-			res.status(500).send('Apologies! Unexpected error occurred while creating account!');
-		}
-	});
+	})(req, res);
 });
 
 app.post('/signup', (req, res) => {
@@ -66,11 +70,22 @@ app.post('/signup', (req, res) => {
 	};
 
 	dbUtils.signup(userData, (err) => {
-		console.log(err);
 		if (err) {
-			// user exists
+			// User already exists
 			if (err.name === 'UserExistsError') {
 				return res.status(400).send(err.message);
+			}
+			// Missing email address
+			else if (err.name === 'MissingUsernameError') {
+				return res.status(422).send(err.message);
+			}
+			// Invalid email address
+			else if (err.name === 'ValidationError') {
+				return res.status(422).send(err.message);
+			}
+			// Invalid password
+			else if (err.name === 'InvalidPasswordError') {
+				return res.status(422).send(err.message);
 			}
 
 			logger.error('Unexpected error occurred while creating account', err);
@@ -81,12 +96,20 @@ app.post('/signup', (req, res) => {
 	});
 });
 
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', isAuthenticated, (req, res) => {
 	res.render('index');
 });
 
-app.get('/', (req, res) => {
-	res.render('index');
+app.get('/login', (req, res) => {
+	if (req.isAuthenticated()) {
+		return res.redirect('/dashboard');
+	}
+
+	return res.render('index');
+});
+
+app.get('/', isAuthenticated, (req, res) => {
+	
 });
 
 server.listen(env.PORT || 8080, () => {
