@@ -7,7 +7,6 @@ const express = require('express'),
 	bodyparser = require('body-parser'),
 	ip = require('ip'),
 	chalk = require('chalk'),
-
 	passport = require('passport'),
 
 	dbUtils = require('./tools/dbUtils'),
@@ -37,9 +36,8 @@ app.use(passport.session());
 dbUtils.initPassport(passport);
 
 function isAuthenticated (req, res, next) {
-	if (req.isAuthenticated()) {
-		return next();
-	}
+	if (req.isAuthenticated()) return next();
+
 	return res.redirect('/login');
 }
 
@@ -106,7 +104,7 @@ app.get('/dashboard', isAuthenticated, (req, res) => {
 	res.render('dashboard');
 });
 
-app.get('/login', (req, res) => {
+app.get('/login', isAuthenticated, (req, res) => {
 	if (req.isAuthenticated()) {
 		return res.redirect('/dashboard');
 	}
