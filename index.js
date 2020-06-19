@@ -3,13 +3,11 @@ const express = require('express'),
 	http = require('http'),
 	server = http.createServer(app),
 	bodyparser = require('body-parser'),
-	mongoose = require('mongoose'),
 	ip = require('ip'),
 	chalk = require('chalk'),
 
 	mongoUtils = require('./tools/mongoUtils'),
-	logger = require('./tools/logger'),
-	crypto = require('./tools/crypto');
+	logger = require('./tools/logger');
 	
 require('dotenv').config();
 const env = process.env;
@@ -73,6 +71,10 @@ app.post('/signup', (req, res) => {
 			res.status(500).send('Apologies! Unexpected error occured while creating account!');
 		}
 	});
+});
+
+app.get('/dashboard', (req, res) => {
+	res.render('index');
 });
 
 app.get('/', (req, res) => {
