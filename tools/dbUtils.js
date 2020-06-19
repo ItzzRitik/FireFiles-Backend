@@ -56,4 +56,4 @@ const signup = (userData, cb) => {
 		passport.deserializeUser(User.deserializeUser());
 	};
 
-module.exports = { initPassport, connectMongoDB, consoleLoader, User, signup };
+module.exports = { initPassport, connectMongoDB, mongoose, consoleLoader, User, signup };

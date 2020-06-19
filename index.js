@@ -1,6 +1,7 @@
 const express = require('express'),
 	app = express(),
 	session = require('express-session'),
+	mongoStore = require('connect-mongo')(session),
 	http = require('http'),
 	server = http.createServer(app),
 	bodyparser = require('body-parser'),
@@ -25,7 +26,10 @@ app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50
 app.use(session({
 	secret: env.SESSION_KEY,
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: false,
+	store: new mongoStore ({
+		mongooseConnection: dbUtils.mongoose.connection
+	})
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -99,7 +103,7 @@ app.post('/signup', (req, res) => {
 });
 
 app.get('/dashboard', isAuthenticated, (req, res) => {
-	res.render('index');
+	res.render('dashboard');
 });
 
 app.get('/login', (req, res) => {
