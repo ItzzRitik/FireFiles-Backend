@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'),
+	passportLocalMongoose = require('passport-local-mongoose'),
 	bcrypt = require('bcrypt'),
 	validator = require('validator');
 
@@ -25,6 +26,7 @@ let UserSchema = new mongoose.Schema({
 });
 
 UserSchema.set('timestamps', true);
+UserSchema.plugin(passportLocalMongoose);
 
 UserSchema.pre('save', function (next) {
 	var user = this;
