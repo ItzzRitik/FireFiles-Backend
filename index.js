@@ -26,18 +26,53 @@ app.use(function(req, res, next) {
 });
 
 app.post('/login', (req, res) => {
-	let email = req.body.email,
-		pass = req.body.pass;
+	let credential = {
+		email: req.body.email,
+		password: req.body.password
+	};
 
-	console.log(email, pass);
+	mongoUtils.login(credential, (err, status) => {
+		if (err) {
+			logger.error('Error occurred while logging in', credential.email, err);
+			res.status(500).send('Apologies! Unexpected error occurred while logging in!');
+		}
+		else if (status === 1) {
+			res.status(200).send('Yayy! Successfully logged in!');
+		}
+		else if (status === 0) {
+			res.status(401).send('Oops! Password you\'ve entered is incorrect!');
+		}
+		else if (status === -1) {
+			res.status(400).send('Uh-Uh! Account with this email doesn\'t exist!');
+		}
+		else {
+			res.status(500).send('Apologies! Unexpected error occurred while creating account!');
+		}
+	});
 });
 
 app.post('/signup', (req, res) => {
-	let name = req.body.name,
-		email = req.body.email,
-		pass = req.body.pass;
+	let userData = {
+		name: req.body.name,
+		email: req.body.email,
+		password: req.body.password
+	};
 
-	console.log(name, email, pass);
+	mongoUtils.signup(userData, (err, status) => {
+		if (err) {
+			logger.error('Error occurred while creating account', err);
+			res.status(500).send('Apologies! Unexpected error occured while creating account!');
+		}
+		else if (status === 1) {
+			res.status(201).send('Yayy! Successfully created your account!');
+		}
+		else if (status === 0) {
+			res.status(400).send('Oops! Account with same email already exists! Try logging in or use a different email.');
+		}
+		else {
+			res.status(500).send('Apologies! Unexpected error occured while creating account!');
+		}
+	});
 });
 
 app.get('/', (req, res) => {
