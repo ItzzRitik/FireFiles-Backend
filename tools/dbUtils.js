@@ -1,5 +1,5 @@
 require('dotenv').config();
-let passport, loading, mongoCall = 0;
+let loading, mongoCall = 0;
 const mongoose = require('mongoose'),
 	chalk = require('chalk'),
 
@@ -51,7 +51,6 @@ const signup = (userData, cb) => {
 	},
 
 	initPassport = (passport) => {
-		this.passport = passport;
 		passport.use(User.createStrategy());
 		passport.serializeUser(User.serializeUser());
 		passport.deserializeUser(User.deserializeUser());

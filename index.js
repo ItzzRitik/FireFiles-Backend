@@ -32,8 +32,7 @@ app.use(passport.session());
 
 dbUtils.initPassport(passport);
 
-function isAuthenticated(req, res, next) {
-	console.log(req.isAuthenticated());
+function isAuthenticated (req, res, next) {
 	if (req.isAuthenticated()) {
 		return next();
 	}
@@ -43,7 +42,10 @@ function isAuthenticated(req, res, next) {
 app.post('/login', (req, res) => {
 	passport.authenticate('local', function (err, user, info) {   
 		if (user) {
-			res.status(200).redirect('/dashboard');
+			req.login(user, function(err) {
+				if (err) return res.status(500).send('Apologies! Unexpected error occurred while creating account!');
+				return res.status(200).redirect('/dashboard');
+			});
 		}
 		else if (err) {
 			logger.error('Unexpected error occurred while creating account', err);
@@ -109,7 +111,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/', isAuthenticated, (req, res) => {
-	
+	return res.redirect('/login');
 });
 
 server.listen(env.PORT || 8080, () => {

@@ -62,9 +62,6 @@ $('#signUp').click(function () {
 				$('#passwordSignUp').val('');
 				$('.overlayContainer').click();
 			}
-			else {
-				console.log('Error');
-			}
 		}
 	};
 	http.send(JSON.stringify({
