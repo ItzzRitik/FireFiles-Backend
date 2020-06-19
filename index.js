@@ -65,20 +65,19 @@ app.post('/signup', (req, res) => {
 		password: req.body.password
 	};
 
-	dbUtils.signup(userData, (err, status) => {
+	dbUtils.signup(userData, (err) => {
+		console.log(err);
 		if (err) {
-			logger.error('Error occurred while creating account', err);
-			res.status(500).send('Apologies! Unexpected error occured while creating account!');
+			// user exists
+			if (err.name === 'UserExistsError') {
+				return res.status(400).send(err.message);
+			}
+
+			logger.error('Unexpected error occurred while creating account', err);
+			return res.status(500).send('Apologies! Unexpected error occurred while creating account!');
 		}
-		else if (status === 1) {
-			res.status(201).send('Yayy! Successfully created your account!');
-		}
-		else if (status === 0) {
-			res.status(400).send('Oops! Account with same email already exists! Try logging in or use a different email.');
-		}
-		else {
-			res.status(500).send('Apologies! Unexpected error occured while creating account!');
-		}
+		
+		return res.status(201).send('Yayy! Successfully created your account!');
 	});
 });
 
