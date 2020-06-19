@@ -10,16 +10,15 @@ $('#signIn').click(function () {
 	http.setRequestHeader('Content-type', 'application/json');
 	http.onreadystatechange = function() {
 		if (http.readyState == XMLHttpRequest.DONE) {
-			console.log(http);
 			new Noty({
 				text: http.responseText,
 				type: (http.status == 200) ? 'success' : 'error',
-				theme: 'relax',
+				theme: notyTheme,
 				layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
 				timeout: 5000
 			}).show();
 
-			if (http.status == 201) {
+			if (http.status == 200) {
 				console.log('Success');
 			}
 			else if (http.status == 400) {
@@ -45,16 +44,18 @@ $('#signUp').click(function () {
 			new Noty({
 				text: http.responseText,
 				type: (http.status == 201) ? 'success' : 'error',
-				theme: 'relax',
+				theme: notyTheme,
 				layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
 				timeout: 5000
 			}).show();
 
-			if (http.status == 201) {
-				console.log('Success');
-			}
-			else if (http.status == 400) {
-				console.log('Duplicate');
+			if (http.status == 201 || http.status == 400) {
+				$('#emailLogin').val($('#emailSignUp').val());
+				$('#emailSignUp').val('');
+
+				$('#passwordLogin').focus();
+				$('#passwordSignUp').val('');
+				$('.overlayContainer').click();
 			}
 			else {
 				console.log('Error');
