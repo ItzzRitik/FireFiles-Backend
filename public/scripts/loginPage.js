@@ -10,32 +10,29 @@ $('#signIn').click(function () {
 	http.setRequestHeader('Content-type', 'application/json');
 	http.onreadystatechange = function() {
 		if (http.readyState == XMLHttpRequest.DONE) {
-			if (http.responseText == 1) {
-				new Noty({
-					text: 'Yayy! Successfully created your account!',
-					type: 'success',
-					theme: 'relax',
-					layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
-					timeout: 4000
-				}).show();
-			}
-			else if (http.responseText == 2) {
+			console.log(http);
+			new Noty({
+				text: http.responseText,
+				type: (http.status == 200) ? 'success' : 'error',
+				theme: 'relax',
+				layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
+				timeout: 5000
+			}).show();
 
+			if (http.status == 201) {
+				console.log('Success');
+			}
+			else if (http.status == 400) {
+				console.log('Duplicate');
 			}
 			else {
-				new Noty({
-					text: 'Apologies! Error occured while creating this account!',
-					type: 'error',
-					theme: 'relax',
-					layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
-					timeout: 3000
-				}).show();
+				console.log('Error');
 			}
 		}
 	};
 	http.send(JSON.stringify({
 		email: $('#emailLogin').val(),
-		pass: $('#passwordLogin').val()
+		password: $('#passwordLogin').val()
 	}));
 });
 
@@ -45,32 +42,28 @@ $('#signUp').click(function () {
 	http.setRequestHeader('Content-type', 'application/json');
 	http.onreadystatechange = function() {
 		if (http.readyState == XMLHttpRequest.DONE) {
-			if (http.responseText == 1) {
-				new Noty({
-					text: 'Yayy! Successfully created your account!',
-					type: 'success',
-					theme: 'relax',
-					layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
-					timeout: 4000
-				}).show();
-			}
-			else if (http.responseText == 2) {
+			new Noty({
+				text: http.responseText,
+				type: (http.status == 201) ? 'success' : 'error',
+				theme: 'relax',
+				layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
+				timeout: 5000
+			}).show();
 
+			if (http.status == 201) {
+				console.log('Success');
+			}
+			else if (http.status == 400) {
+				console.log('Duplicate');
 			}
 			else {
-				new Noty({
-					text: 'Apologies! Error occured while creating this account!',
-					type: 'error',
-					theme: 'relax',
-					layout: (screen.width <= 480) ? 'bottomCenter' : 'topRight',
-					timeout: 3000
-				}).show();
+				console.log('Error');
 			}
 		}
 	};
 	http.send(JSON.stringify({
 		name: $('#nameSignUp').val(),
 		email: $('#emailSignUp').val(),
-		pass: $('#passwordSignUp').val()
+		password: $('#passwordSignUp').val()
 	}));
 });
