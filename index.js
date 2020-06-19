@@ -25,11 +25,26 @@ app.use(function(req, res, next) {
 	next();
 });
 
-app.get('/', function(req, res) {
+app.post('/login', (req, res) => {
+	let email = req.body.email,
+		pass = req.body.pass;
+
+	console.log(email, pass);
+});
+
+app.post('/signup', (req, res) => {
+	let name = req.body.name,
+		email = req.body.email,
+		pass = req.body.pass;
+
+	console.log(name, email, pass);
+});
+
+app.get('/', (req, res) => {
 	res.render('index');
 });
 
-server.listen(env.PORT || 8080, function() {
+server.listen(env.PORT || 8080, () => {
 	logger.clear();
 	logger.log(true, 'Starting Server');
 	logger.log(false, 'Server is running at', 
