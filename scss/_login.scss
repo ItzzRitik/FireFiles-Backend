@@ -33,8 +33,8 @@ $transitionDuration: 0.7s;
 		}
 		h1 {
 			font-weight: bold;
-			margin: 0;
-			
+			margin: 0 0 5px 0;
+
 			&.formHeader {
 				color: $color-brand-primary;
 			}
@@ -50,7 +50,7 @@ $transitionDuration: 0.7s;
 			margin: 20px 0 30px;
 		}
 		a {
-			color: #333;
+			color: $color-content-secondary;
 			font-size: 14px;
 			text-decoration: none;
 			margin: 15px 0;
@@ -59,10 +59,11 @@ $transitionDuration: 0.7s;
 			font-size: 12px;
 		}
 		input {
-			background-color: #EEEEEE;
-			box-shadow: inset 0px 11px 0px 10px #EEEEEE, inset 0px -11px 0px 10px #EEEEEE;
+			background-color: $color-background-tertiary;
+			box-shadow: inset 0px 11px 0px 10px $color-background-tertiary, 
+				inset 0px -11px 0px 10px $color-background-tertiary;
 			border: none;
-			color: #333;
+			color: $color-content-primary;
 			padding: 12px 15px;
 			margin: 8px 0;
 			width: 80%;
@@ -74,8 +75,8 @@ $transitionDuration: 0.7s;
 
 			&:focus {
 				background-color: $color-background-primary;
-				box-shadow: inset 0px 0px 0px 0px #F7F7F7, inset 0px 0px 0px 0px #F7F7F7;
-				border: 1px solid #EEEEEE;
+				box-shadow: inset 0px 0px 0px 0px $color-background-secondary, inset 0px 0px 0px 0px $color-background-secondary;
+				border: 1px solid $color-background-tertiary;
 				transition: all 0.2s ease-out;
 			}
 		}
@@ -84,7 +85,7 @@ $transitionDuration: 0.7s;
 			border-radius: 20px;
 			border: 1px solid $color-brand-primary;
 			background: $color-brand-primary;
-			color: $color-content-secondary;
+			color: $color-content-primary-light;
 			font-size: 14px;
 			font-weight: normal;
 			letter-spacing: 1px;
@@ -110,8 +111,8 @@ $transitionDuration: 0.7s;
 			&.slide {
 				position: absolute;
 				background-color: transparent;
-				color: $color-content-secondary;
-				border-color: $color-content-secondary;
+				color: $color-content-primary-light;
+				border-color: $color-content-primary-light;
 				left: 50%;
 				bottom: 32%;
 				padding: 12px 12px;
@@ -192,7 +193,7 @@ $transitionDuration: 0.7s;
 				background-repeat: no-repeat;
 				background-size: cover;
 				background-position: 0 0;
-				color: $color-content-secondary;
+				color: $color-content-primary-light;
 				position: relative;
 				left: -100%;
 				height: 100%;
@@ -321,7 +322,7 @@ $transitionDuration: 0.7s;
 		}
 		
 		.socialContainer a {
-			border: 1px solid #DDDDDD;
+			border: 1px solid $color-background-tertiary;
 			border-radius: 50%;
 			display: inline-flex;
 			justify-content: center;
