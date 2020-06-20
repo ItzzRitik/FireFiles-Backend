@@ -83,6 +83,10 @@ app.post('/signup', (req, res) => {
 			else if (err.name === 'MissingUsernameError') {
 				return res.status(422).send(err.message);
 			}
+			// Missing password
+			else if (err.name === 'MissingPasswordError') {
+				return res.status(422).send(err.message);
+			}
 			// Invalid email address
 			else if (err.name === 'ValidationError') {
 				return res.status(422).send(err.message);

@@ -60,6 +60,7 @@
 			border-radius: 5px;
 			font-family: 'Montserrat', sans-serif;
 			transition: all 0.2s ease-in;
+			user-select: none;
 
 			&:focus {
 				background-color: #FFFFFF;
@@ -83,11 +84,12 @@
 			outline: none;
 			transition: all 100ms ease-in-out;
 			font-family: 'Montserrat', sans-serif;
+			user-select: none;
 			cursor: pointer;
 
 			&:hover {
 				color: #FF4B2B;
-				transform: scale(1.05);
+				transform: scale(1.03);
 				background-color: transparent;
 				transition: all 100ms ease-in-out;
 			}
@@ -137,7 +139,10 @@
 			z-index: 100;
 
 			&:hover .signButton.ghost{
-				transform: scale(1.05);
+				transform: scale(1.03);
+			}
+			&:active .signButton.ghost{
+				transform: scale(0.95);
 			}
 	
 			.overlay {
