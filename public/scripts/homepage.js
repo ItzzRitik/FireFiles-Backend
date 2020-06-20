@@ -70,3 +70,25 @@ $('#signUp').click(function () {
 		password: $('#passwordSignUp').val()
 	}));
 });
+
+let hashChanged = function () {
+	if (location.hash === '#login') {
+		if (window.user) {
+			window.location = '/dashboard';
+		}
+		else $('.loginPage').css('display', 'flex');
+	}
+	else {
+		$('.loginPage').css('display', 'none');
+	}
+};
+window.onhashchange = hashChanged;
+window.onload = function () {
+	$.post('/getUser', function(user, status) {
+		if (status === 'success' && user) {
+			window.user = user;
+		}
+
+		hashChanged();
+	}, 'json');
+};
