@@ -38,7 +38,7 @@ dbUtils.initPassport(passport);
 function isAuthenticated (req, res, next) {
 	if (req.isAuthenticated()) return next();
 
-	return res.redirect('/login');
+	return res.redirect('/#login');
 }
 
 app.post('/login', (req, res) => {
@@ -104,6 +104,16 @@ app.post('/signup', (req, res) => {
 	});
 });
 
+app.post('/getUser', function(req, res) {
+	if (req.user === undefined) {
+		return res.status(204).json({});
+	} 
+	
+	return res.status(200).json({
+		user: req.user
+	});
+});
+
 app.get('/dashboard', isAuthenticated, (req, res) => {
 	res.render('dashboard');
 });
@@ -112,8 +122,7 @@ app.get('/login', (req, res) => {
 	if (req.isAuthenticated()) {
 		return res.redirect('/dashboard');
 	}
-
-	return res.render('index');
+	res.redirect('/#login');
 });
 
 app.get('/logout', (req, res) => {
@@ -124,8 +133,12 @@ app.get('/logout', (req, res) => {
 	});
 });
 
-app.get('/', isAuthenticated, (req, res) => {
-	return res.redirect('/login');
+app.get('/', (req, res) => {
+	return res.render('homepage');
+});
+
+app.get('/*', (req, res) => {
+	return res.send('404 Page Not Found');
 });
 
 server.listen(env.PORT || 8080, () => {
