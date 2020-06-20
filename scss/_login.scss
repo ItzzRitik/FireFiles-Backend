@@ -19,7 +19,7 @@ $transitionDuration: 0.7s;
 		position: relative;
 		overflow: hidden;
 		width: 850px;
-		height: 500px;
+		height: 520px;
 		max-width: 100%;
 		min-height: 480px;
 		font-family: 'Montserrat', sans-serif;
@@ -31,6 +31,10 @@ $transitionDuration: 0.7s;
 			font-weight: bold;
 			margin: 0;
 		}
+		.formHeader {
+			color: $color-brand-primary;
+		}
+
 		h2 {
 			text-align: center;
 		}
@@ -81,7 +85,7 @@ $transitionDuration: 0.7s;
 			font-weight: normal;
 			letter-spacing: 1px;
 			text-transform: uppercase;
-			margin-top: 20px;
+			margin-top: 30px;
 			outline: none;
 			min-width: 180px;
 			height: 40px;
@@ -145,7 +149,7 @@ $transitionDuration: 0.7s;
 			text-align: center;
 			position: absolute;
 			top: 0;
-			transition: all $transitionDuration ease-out;
+			transition: all $transitionDuration ease-in-out;
 		}
 		.signInContainer {
 			left: 0;
