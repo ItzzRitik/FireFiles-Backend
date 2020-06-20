@@ -4,11 +4,15 @@
 $transitionDuration: 0.7s;
 
 .loginPage {
+	position: absolute;
+	top: 0;
+	left: 0;
 	background: $color-background-secondary;
-	display: flex;
+	display: none;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+	width: 100vw;
 	height: 100vh;
 	user-select: none;
 
@@ -30,11 +34,11 @@ $transitionDuration: 0.7s;
 		h1 {
 			font-weight: bold;
 			margin: 0;
+			
+			&.formHeader {
+				color: $color-brand-primary;
+			}
 		}
-		.formHeader {
-			color: $color-brand-primary;
-		}
-
 		h2 {
 			text-align: center;
 		}
