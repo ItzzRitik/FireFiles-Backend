@@ -109,8 +109,7 @@ app.post('/getUser', function(req, res) {
 	if (req.user === undefined) {
 		return res.status(204).json({});
 	} 
-	
-	return res.status(200).json(_.pick(req.user, ['id', 'email']));
+	return res.status(200).json(_.pick(req.user, ['id', 'email', 'name']));
 });
 
 app.get('/dashboard', isAuthenticated, (req, res) => {

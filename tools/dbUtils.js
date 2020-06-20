@@ -7,7 +7,10 @@ const mongoose = require('mongoose'),
 	User = require('../models/user');
 
 const signup = (userData, cb) => {
-		User.register(new User({ email: userData.email }), userData.password, (err) => {
+		User.register(new User({ 
+			name: userData.name,
+			email: userData.email 
+		}), userData.password, (err) => {
 			if (err) return cb(err);
 
 			return cb();
