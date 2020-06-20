@@ -3,8 +3,11 @@ window.onload = function () {
 	$.post('/getUser', function(user, status) {
 		if (status === 'success' && user) {
 			window.user = user;
-			$('a').text(window.user.name);
 		}
 
 	}, 'json');
 };
+
+$('.upload input').change(function () {
+	console.log($(this).val());
+});
