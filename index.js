@@ -8,6 +8,7 @@ const express = require('express'),
 	ip = require('ip'),
 	chalk = require('chalk'),
 	passport = require('passport'),
+	_ = require('lodash'),
 
 	dbUtils = require('./tools/dbUtils'),
 	logger = require('./tools/logger');
@@ -109,9 +110,7 @@ app.post('/getUser', function(req, res) {
 		return res.status(204).json({});
 	} 
 	
-	return res.status(200).json({
-		user: req.user
-	});
+	return res.status(200).json(_.pick(req.user, ['id', 'email']));
 });
 
 app.get('/dashboard', isAuthenticated, (req, res) => {
