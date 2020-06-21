@@ -10,6 +10,7 @@ const express = require('express'),
 	passport = require('passport'),
 	_ = require('lodash'),
 
+	awsUtils = require('./tools/awsUtils'),
 	dbUtils = require('./tools/dbUtils'),
 	logger = require('./tools/logger');
 	
@@ -39,7 +40,14 @@ dbUtils.initPassport(passport);
 function isAuthenticated (req, res, next) {
 	if (req.isAuthenticated()) return next();
 
-	return res.redirect('/#login');
+	if (req.method == 'GET') {
+		return res.redirect('/#login');
+	}
+	else if (req.method == 'POST') {
+		return res.status(403).send({
+			message: 'Authentication is required to access this route'
+		});
+	}
 }
 
 app.post('/login', (req, res) => {
@@ -61,7 +69,7 @@ app.post('/login', (req, res) => {
 			}
 			// Incorrect password
 			else if (info.name === 'IncorrectPasswordError') {
-				return res.status(400).send(info.message);
+				return res.status(403).send(info.message);
 			}
 		}
 	})(req, res);
@@ -110,6 +118,22 @@ app.post('/getUser', function(req, res) {
 		return res.status(204).json({});
 	} 
 	return res.status(200).json(_.pick(req.user, ['id', 'email', 'name']));
+});
+
+app.post('/getSignedS3', isAuthenticated, (req, res) => {
+	let file = {
+		name: req.body.fileName,
+		type: req.body.fileType
+	};
+	
+	awsUtils.getSignedS3(file, req.user, (err, signedUrl) => {
+		if (err) {
+			logger.error('Error occurred while generating signed aws s3 url', err);
+			return res.status(503);
+		}
+
+		return res.status(200).send(signedUrl);
+	});
 });
 
 app.get('/dashboard', isAuthenticated, (req, res) => {
