@@ -1,12 +1,15 @@
 {
- "name": "resumestore",
+ "name": "FireFiles",
  "version": "1.0.0",
  "description": "",
  "main": "index.js",
  "scripts": {
   "build-scss": "node-sass scss/style.scss -o public/styles --quiet --output-style expanded --indent-type tab --indent-width 1",
   "watch-scss": "npm run build-scss & npm run build-scss -- -w",
-  "start": "npm run watch-scss & node index.js"
+  "start": "npm run watch-scss & node index.js",
+  "test": "snyk test",
+  "snyk-protect": "snyk protect",
+  "prepare": "npm run snyk-protect"
  },
  "author": "Ritik Srivastava",
  "license": "ISC",
@@ -20,6 +23,7 @@
   "dotenv": "^8.1.0",
   "ejs": "^3.1.2",
   "express": "^4.17.1",
+  "helmet": "^3.23.1",
   "ip": "^1.1.5",
   "jquery": "^3.5.1",
   "loadash": "^1.0.0",
@@ -27,6 +31,7 @@
   "node-sass": "^4.14.1",
   "passport": "^0.4.1",
   "passport-local-mongoose": "^6.0.1",
+  "snyk": "^1.347.1",
   "validator": "^13.1.1"
  },
  "nodemonConfig": {
@@ -41,5 +46,6 @@
    "start": "npm run watch-scss",
    "restart": "osascript -e 'display notification \"'$FILENAME'\" with title \"Unite Console\" subtitle \"App restarted due to file change\"'"
   }
- }
+ },
+ "snyk": true
 }

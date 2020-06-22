@@ -3,6 +3,7 @@ const express = require('express'),
 	session = require('cookie-session'),
 	http = require('http'),
 	server = http.createServer(app),
+	helmet = require('helmet'),
 	bodyparser = require('body-parser'),
 	ip = require('ip'),
 	chalk = require('chalk'),
@@ -16,7 +17,6 @@ const express = require('express'),
 require('dotenv').config();
 const env = process.env;
 
-app.enable('trust proxy');
 app.set('view engine', 'ejs');
 
 app.use('/public', express.static('public'));
@@ -24,14 +24,17 @@ app.use('/lib', express.static('node_modules'));
 app.use(bodyparser.json({ limit: '50mb' }));
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
 
+app.use(helmet());
+
 // Cors configuration
 app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', env.APP_URL);
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+	console.log(req.secure);
 	if (req.headers['x-forwarded-proto'] === 'https') {
-		console.log(req.connection.encrypted);
+		console.log(req.connection);
 		req.connection.encrypted = true;
 	}
 	next();
