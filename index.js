@@ -1,9 +1,9 @@
 const express = require('express'),
 	app = express(),
-	session = require('express-session'),
-	mongoStore = require('connect-mongo')(session),
+	session = require('cookie-session'),
 	http = require('http'),
 	server = http.createServer(app),
+	cors = require('cors'),
 	bodyparser = require('body-parser'),
 	ip = require('ip'),
 	chalk = require('chalk'),
@@ -23,19 +23,19 @@ app.use('/public', express.static('public'));
 app.use('/lib', express.static('node_modules'));
 app.use(bodyparser.json({ limit: '50mb' }));
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
-app.use(function(req, res, next) {
-	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-	next();
-});
+
+app.use(cors({
+	'credentials': true,
+	'origin': [env.APP_URL],
+}));
 
 app.use(session({
 	secret: env.SESSION_KEY,
 	resave: false,
 	saveUninitialized: false,
-	store: new mongoStore ({
-		mongooseConnection: dbUtils.mongoose.connection
-	})
+	cookie: {
+		secureProxy: true
+	}
 }));
 app.use(passport.initialize());
 app.use(passport.session());
