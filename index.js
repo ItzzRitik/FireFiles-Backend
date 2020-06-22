@@ -23,6 +23,11 @@ app.use('/public', express.static('public'));
 app.use('/lib', express.static('node_modules'));
 app.use(bodyparser.json({ limit: '50mb' }));
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
+app.use(function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	next();
+});
 
 app.use(session({
 	secret: env.SESSION_KEY,
@@ -126,13 +131,22 @@ app.post('/getSignedS3', isAuthenticated, (req, res) => {
 		type: req.body.fileType
 	};
 	
-	awsUtils.getSignedS3(file, req.user, (err, signedUrl) => {
+	awsUtils.getSignedS3(file, req.user, (err, preSignedPost) => {
 		if (err) {
-			logger.error('Error occurred while generating signed aws s3 url', err);
+			logger.error('Error occurred while generating aws s3 preSignedPost', err);
 			return res.status(503);
 		}
 
-		return res.status(200).send(signedUrl);
+		return res.status(200).send(preSignedPost);
+	});
+});
+
+app.get('/download/:fileKey', isAuthenticated, (req, res) => {
+	let fileKey = req.user.id + '/' + req.params.fileKey;
+	awsUtils.streamFile(fileKey, (headers, readStream) => {
+		res.set('Content-Length', headers['content-length']);
+		res.set('Content-Type', headers['content-type']);
+		readStream.pipe(res);
 	});
 });
 
