@@ -37,7 +37,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: false,
 	sameSite: 'none',
-	secure: true
+	secure: env.ENVIRONMENT === 'prod'
 }));
 app.use(passport.initialize());
 app.use(passport.session());
