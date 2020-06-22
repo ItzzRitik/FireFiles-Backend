@@ -1,8 +1,6 @@
 const express = require('express'),
 	app = express(),
 	session = require('cookie-session'),
-	http = require('http'),
-	server = http.createServer(app),
 	helmet = require('helmet'),
 	bodyparser = require('body-parser'),
 	ip = require('ip'),
@@ -32,9 +30,8 @@ app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-	console.log(req.secure);
-	if (req.headers['x-forwarded-proto'] === 'https') {
-		console.log(req.connection);
+	console.log(req.secure, req.connection.encrypted);
+	if (req.secure) {
 		req.connection.encrypted = true;
 	}
 	next();
@@ -186,7 +183,7 @@ app.get('/*', (req, res) => {
 	return res.send('You\'re at wrong place');
 });
 
-server.listen(env.PORT || 8080, () => {
+app.listen(env.PORT || 8080, () => {
 	logger.clear();
 	logger.log(true, 'Starting Server');
 	logger.log(false, 'Server is running at', 
