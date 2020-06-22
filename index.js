@@ -3,7 +3,6 @@ const express = require('express'),
 	session = require('cookie-session'),
 	http = require('http'),
 	server = http.createServer(app),
-	cors = require('cors'),
 	bodyparser = require('body-parser'),
 	ip = require('ip'),
 	chalk = require('chalk'),
@@ -24,10 +23,13 @@ app.use('/lib', express.static('node_modules'));
 app.use(bodyparser.json({ limit: '50mb' }));
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
 
-app.use(cors({
-	'credentials': true,
-	'origin': [env.APP_URL],
-}));
+// Cors configuration
+app.use(function(req, res, next) {
+	res.setHeader('Access-Control-Allow-Origin', env.APP_URL);
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+	next();
+});
 
 app.use(session({
 	secret: env.SESSION_KEY,
