@@ -16,6 +16,7 @@ const express = require('express'),
 require('dotenv').config();
 const env = process.env;
 
+app.enable('trust proxy');
 app.set('view engine', 'ejs');
 
 app.use('/public', express.static('public'));
@@ -28,16 +29,20 @@ app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', env.APP_URL);
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+	if (req.headers['x-forwarded-proto'] === 'https') {
+		console.log(req.connection.encrypted);
+		req.connection.encrypted = true;
+	}
 	next();
 });
 
 app.use(session({
 	secret: env.SESSION_KEY,
-	resave: false,
+	resave: true,
 	saveUninitialized: false,
-	cookie: {
-		secureProxy: true
-	}
+	sameSite: 'none',
+	secure: true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -53,7 +58,6 @@ function isAuthenticated (req, res, next) {
 }
 
 app.post('/login', (req, res) => {
-	console.log(req.body.email, req.body.password);
 	if (!req.body.email || !req.body.password) {
 		return res.status(400).send('Both email and password are required for login!'); 
 	}
