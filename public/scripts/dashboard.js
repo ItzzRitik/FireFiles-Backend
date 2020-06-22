@@ -8,42 +8,41 @@ window.onload = function () {
 	}, 'json');
 };
 
-function uploadFile (file, signedRequest) {
-	const xhr = new XMLHttpRequest();
-	xhr.open('PUT', signedRequest);
-	xhr.setRequestHeader('Content-type', file.type);
-	xhr.onreadystatechange = () => {
-		if (xhr.readyState === XMLHttpRequest.DONE) {
-			if (xhr.status === 200) {
-				alert('Picture uploaded to S3', xhr.responseText);
-			}
-			else {
-				alert('Could not upload file.');
-			}
-		}
-	};
-	xhr.send(file);
-}
-
 
 $('.upload input').change(function () {
-	const file = this.files[0],
-		xhr = new XMLHttpRequest();
-	xhr.open('POST', '/getSignedS3');
-	xhr.setRequestHeader('Content-type', 'application/json');
-	xhr.onreadystatechange = () => {
-		if (xhr.readyState === XMLHttpRequest.DONE) {
-			if (xhr.status === 200) {
-				console.log(xhr.responseText);
-				uploadFile(file, xhr.responseText);
+	const file = this.files[0];
+	console.log(file.name);
+
+	function uploadFile (url, formData) {
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
+		xhr.upload.onprogress = function(evt) {
+			if (evt.lengthComputable) {
+				var percentComplete = parseInt((evt.loaded / evt.total) * 100);
+				console.log('Upload: ' + percentComplete + '% complete');
 			}
-			else {
-				alert('Could not get signed URL.');
+		};
+		xhr.onreadystatechange = function () {  
+			if (xhr.readyState == XMLHttpRequest.DONE) {
+				console.log('Done');
 			}
-		}
-	};
-	xhr.send(JSON.stringify({
+		}; 
+		xhr.send(formData);
+	}
+
+	$.post('/getSignedS3', { 
 		fileName: file.name,
 		fileType: file.type
-	}));
+	}, function(presignedPost, status) {
+		if (status === 'success' && presignedPost) {
+			var formData = new FormData();
+			Object.keys(presignedPost.fields).forEach(function (key) {
+				formData.append(key, presignedPost.fields[key]);
+			});
+			formData.append('file', file);
+
+			uploadFile(presignedPost.url, formData);
+		}
+		else alert('Could not get signed URL.');
+	}, 'json');
 });
