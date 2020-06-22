@@ -47,22 +47,22 @@ dbUtils.initPassport(passport);
 function isAuthenticated (req, res, next) {
 	if (req.isAuthenticated()) return next();
 
-	if (req.method == 'GET') {
-		return res.redirect('/#login');
-	}
-	else if (req.method == 'POST') {
-		return res.status(403).send({
-			message: 'Authentication is required to access this route'
-		});
-	}
+	return res.status(403).send({
+		message: 'Authentication is required to access this route'
+	});
 }
 
 app.post('/login', (req, res) => {
+	console.log(req.body.email, req.body.password);
+	if (!req.body.email || !req.body.password) {
+		return res.status(400).send('Both email and password are required for login!'); 
+	}
+
 	passport.authenticate('local', function (err, user, info) {   
 		if (user) {
 			req.login(user, (err) => {
 				if (err) return res.status(500).send('Apologies! Unexpected error occurred while creating account!');
-				return res.status(200).redirect('/dashboard');
+				return res.status(200).send('Yayy! Successfully logged in!');
 			});
 		}
 		else if (err) {
@@ -152,16 +152,16 @@ app.get('/download/:fileKey', isAuthenticated, (req, res) => {
 	});
 });
 
-app.get('/dashboard', isAuthenticated, (req, res) => {
-	res.render('dashboard');
-});
+// app.get('/dashboard', isAuthenticated, (req, res) => {
+// 	res.render('dashboard');
+// });
 
-app.get('/login', (req, res) => {
-	if (req.isAuthenticated()) {
-		return res.redirect('/dashboard');
-	}
-	res.redirect('/#login');
-});
+// app.get('/login', (req, res) => {
+// 	if (req.isAuthenticated()) {
+// 		return res.redirect('/dashboard');
+// 	}
+// 	res.redirect('/#login');
+// });
 
 app.get('/logout', (req, res) => {
 	req.logout();
@@ -171,12 +171,12 @@ app.get('/logout', (req, res) => {
 	});
 });
 
-app.get('/', (req, res) => {
-	return res.render('homepage');
-});
+// app.get('/', (req, res) => {
+// 	return res.render('homepage');
+// });
 
 app.get('/*', (req, res) => {
-	return res.send('404 Page Not Found');
+	return res.send('You\'re at wrong place');
 });
 
 server.listen(env.PORT || 8080, () => {
