@@ -16,6 +16,12 @@ const signup = (userData, cb) => {
 			return cb();
 		});
 	},
+	getUserData = (email, fields, cb) => {
+		User.findOne({ email }, fields, (err, userData) => {
+			if (err) return cb(err);
+			return cb(null, userData);
+		});
+	},
 
 	consoleLoader = (msg) => {
 		let x = 0, 
@@ -32,7 +38,7 @@ const signup = (userData, cb) => {
 			() => {
 				clearInterval(loading);
 				logger.stdout('\r');
-				logger.log(false, 'Connection Established');
+				logger.log(false, chalk.green('MongoDB Connection Established'));
 				cb();
 			}
 		).catch((e) => {
@@ -47,7 +53,6 @@ const signup = (userData, cb) => {
 	},
     
 	connectMongoDB = (cb) => {
-		logger.log(true, 'Connecting to MongoDB Atlas Server');
 		mongoConnect(() => {
 			cb();
 		});
@@ -59,4 +64,4 @@ const signup = (userData, cb) => {
 		passport.deserializeUser(User.deserializeUser());
 	};
 
-module.exports = { initPassport, connectMongoDB, mongoose, consoleLoader, User, signup };
+module.exports = { initPassport, connectMongoDB, mongoose, consoleLoader, User, signup, getUserData };
