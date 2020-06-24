@@ -1,6 +1,7 @@
 const express = require('express'),
 	app = express(),
-	session = require('cookie-session'),
+	cookieSession = require('cookie-session'),
+	socketIO = require('socket.io'),
 	helmet = require('helmet'),
 	bodyparser = require('body-parser'),
 	ip = require('ip'),
@@ -8,12 +9,22 @@ const express = require('express'),
 	passport = require('passport'),
 	_ = require('lodash'),
 
+	appName = 'Firefiles',
 	awsUtils = require('./tools/awsUtils'),
 	dbUtils = require('./tools/dbUtils'),
-	logger = require('./tools/logger');
+	logger = require('./tools/logger'),
+	socketUtils = require('./tools/socketUtils');
 	
 require('dotenv').config();
-const env = process.env;
+const env = process.env,
+	session = cookieSession({
+		name: appName,
+		secret: env.SESSION_KEY,
+		resave: true,
+		saveUninitialized: false,
+		sameSite: 'none',
+		secure: env.ENVIRONMENT === 'prod'
+	});
 
 app.enable('trust proxy');
 app.use(helmet());
@@ -32,13 +43,7 @@ app.use(function(req, res, next) {
 	next();
 });
 
-app.use(session({
-	secret: env.SESSION_KEY,
-	resave: true,
-	saveUninitialized: false,
-	sameSite: 'none',
-	secure: env.ENVIRONMENT === 'prod'
-}));
+app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -47,9 +52,7 @@ dbUtils.initPassport(passport);
 function isAuthenticated (req, res, next) {
 	if (req.isAuthenticated()) return next();
 
-	return res.status(403).send({
-		message: 'Authentication is required to access this route'
-	});
+	return res.status(403).send('Authentication is required to access this route');
 }
 
 app.post('/login', (req, res) => {
@@ -123,7 +126,7 @@ app.post('/getUser', function(req, res) {
 	if (req.user === undefined) {
 		return res.status(204).json({});
 	} 
-	return res.status(200).json(_.pick(req.user, ['id', 'email', 'name']));
+	return res.status(200).json(_.pick(req.user, ['email', 'name']));
 });
 
 app.post('/getSignedS3', isAuthenticated, (req, res) => {
@@ -162,12 +165,11 @@ app.get('/download/:fileKey', isAuthenticated, (req, res) => {
 // 	res.redirect('/#login');
 // });
 
-app.get('/logout', (req, res) => {
+app.post('/logout', isAuthenticated, (req, res) => {
 	req.logout();
-	req.session.destroy(function() {
-		res.clearCookie('connect.sid');
-		res.redirect('/');
-	});
+	req.session = null;
+	res.clearCookie(appName + '.sid');
+	res.status('200').send('Successfully logged out');
 });
 
 // app.get('/', (req, res) => {
@@ -178,12 +180,14 @@ app.get('/*', (req, res) => {
 	return res.send('You\'re at wrong place');
 });
 
-app.listen(env.PORT || 8080, () => {
+let io = socketIO(app.listen(env.PORT || 8080, () => {
 	logger.clear();
 	logger.log(true, 'Starting Server');
 	logger.log(false, 'Server is running at', 
 		chalk.blue('http://' + (env.IP || ip.address() || 'localhost') + ':' + (env.PORT || '8080')));
 	
+	logger.log(true, 'Establishing Services');
 	dbUtils.connectMongoDB(() => {
+		socketUtils.initialize(io, session, passport.session());
 	});
-});
+}));
