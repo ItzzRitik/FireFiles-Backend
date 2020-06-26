@@ -23,7 +23,7 @@ const env = process.env,
 		resave: true,
 		saveUninitialized: false,
 		sameSite: 'none',
-		secure: env.ENVIRONMENT === 'prod'
+		secure: env.ENVIRONMENT !== 'dev'
 	});
 
 app.enable('trust proxy');
@@ -37,7 +37,8 @@ app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50
 
 // Cors configuration
 app.use(function(req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', env.APP_URL);
+	let allowOrigin = (env.ENVIRONMENT === 'dev') ? req.headers.origin : env.APP_URL;
+	allowOrigin && res.setHeader('Access-Control-Allow-Origin', allowOrigin);
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 	next();
