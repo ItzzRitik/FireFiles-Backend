@@ -15,9 +15,9 @@ const logger = require('./logger'),
 
 		io.on('connection', (socket) => {
 			var email = socket.request.session.passport.user;
-			dbUtils.getUserData(email, 'email name', (err, userData) => {
+			dbUtils.getUserData(email, { _id: 0 }, (err, userData) => {
 				socket.join(userData._id);
-				socket.emit('userData', _.pick(userData, ['email', 'name']));
+				socket.emit('userData', userData);
 			});
         
 			socket.on('disconnect', () => {
