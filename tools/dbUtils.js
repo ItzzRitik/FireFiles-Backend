@@ -19,7 +19,17 @@ const signup = (userData, cb) => {
 	getUserData = (email, fields, cb) => {
 		User.findOne({ email }, fields, (err, userData) => {
 			if (err) return cb(err);
-			return cb(null, userData);
+
+			const user = userData.toObject();
+			delete user._id;
+
+			if (fields.picture !== 0 && !user.picture) {
+				const spaces = user.name.trim().split(' ').length - 1;
+				user.picture = 'https://avatars.dicebear.com/api/initials/' + encodeURIComponent(user.name.trim()) +
+					'.svg?r=50&m=8&chars=' + (spaces == 0 ? '1' : '2') + '&backgroundColorLevel=300';
+			}
+
+			return cb(null, userData._id, user);
 		});
 	},
 

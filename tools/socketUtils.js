@@ -1,7 +1,6 @@
 require('dotenv').config();
 const logger = require('./logger'),
 	chalk = require('chalk'),
-	_ = require('lodash'),
 	dbUtils = require('./dbUtils'),
 
 	initialize = (io, cookieSession) => {
@@ -15,9 +14,9 @@ const logger = require('./logger'),
 
 		io.on('connection', (socket) => {
 			var email = socket.request.session.passport.user;
-			dbUtils.getUserData(email, { _id: 0 }, (err, userData) => {
-				socket.join(userData._id);
-				socket.emit('userData', userData);
+			dbUtils.getUserData(email, '', (err, id, user) => {
+				socket.join(id);
+				socket.emit('userData', user);
 			});
         
 			socket.on('disconnect', () => {
