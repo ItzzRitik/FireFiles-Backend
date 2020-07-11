@@ -178,7 +178,7 @@ app.post('/logout', isAuthenticated, (req, res) => {
 // });
 
 app.get('/*', (req, res) => {
-	return res.send('You\'re at wrong place');
+	return res.send('Congratulation!!\nYou found a treasure, but it is under development.');
 });
 
 let io = socketIO(app.listen(env.PORT || 8080, () => {
