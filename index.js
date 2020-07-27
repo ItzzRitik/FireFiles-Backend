@@ -23,6 +23,7 @@ const env = process.env,
 		resave: true,
 		saveUninitialized: false,
 		sameSite: 'none',
+		maxAge: 1000 * 3600 * 24 * 30 * 2, // 2 months (ms)
 		secure: env.ENVIRONMENT !== 'dev'
 	});
 
@@ -35,6 +36,10 @@ app.use('/lib', express.static('node_modules'));
 app.use(bodyparser.json({ limit: '50mb' }));
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
 
+app.use(session);
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Cors configuration
 app.use(function(req, res, next) {
 	let allowOrigin = (env.ENVIRONMENT === 'dev') ? req.headers.origin : env.APP_URL;
@@ -43,10 +48,6 @@ app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 });
-
-app.use(session);
-app.use(passport.initialize());
-app.use(passport.session());
 
 dbUtils.initPassport(passport);
 
@@ -178,7 +179,7 @@ app.post('/logout', isAuthenticated, (req, res) => {
 // });
 
 app.get('/*', (req, res) => {
-	return res.send('Congratulation!!\nYou found a treasure, but it is under development.');
+	return res.send('Congratulation!!<br>You found a treasure, time to get the key');
 });
 
 let io = socketIO(app.listen(env.PORT || 8080, () => {
