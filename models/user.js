@@ -19,7 +19,7 @@ let UserSchema = new mongoose.Schema({
 		}
 	}),
 	passwordValidator = (password, next) => {
-		var regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+		var regex = /(?=^.{8,50}$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?!.*\s).*$/;
 		if (!password.match(regex)) {
 			// Invalid password error
 			return next({
