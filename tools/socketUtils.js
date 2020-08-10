@@ -34,11 +34,11 @@ const logger = require('./logger'),
 					return items;
 				}
 				processFiles(files).then(res => {
-						cb(null, res);
-					})
-					.catch(err => {
-						cb(err);
-					});
+					cb(null, res);
+				})
+				.catch(err => {
+					cb(err);
+				});
 			});
         
 			socket.on('disconnect', () => {
