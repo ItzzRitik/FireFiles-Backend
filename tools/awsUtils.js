@@ -8,22 +8,24 @@ const aws = require('aws-sdk'),
 aws.config.update(awsSecrets);
 const S3 = new aws.S3();
 	
-const getSignedS3 = (file, user, cb) => {
+const getSignedS3 = async (file, userID, cb) => {
 		const params = {
 			Bucket: process.env.AWS_S3_BUCKET,
 			Expires: 60,
 			ACL: 'private',
-			Conditions: [['content-length-range', 100, 10000000]],
+			Conditions: [['content-length-range', 100, 10000000]], // max- 10mb
 			Fields: {
 				'Content-Type': file.type,
-				'key': user.id + '/' + file.name
+				'key': userID + '/' + file.name
 			}
 		};
 
-		S3.createPresignedPost(params, (err, preSignedPost) => {
-			if (err) return cb(err);
-
-			return cb(null, preSignedPost);
+		return new Promise((resolve, reject) => {
+			S3.createPresignedPost(params, (err, preSignedPost) => {
+				if (err) reject(err);
+	
+				return resolve(preSignedPost);
+			});
 		});
 	},
 
