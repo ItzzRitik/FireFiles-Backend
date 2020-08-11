@@ -20,9 +20,12 @@ const logger = require('./logger'),
 			dbUtils.getUserData(email, '', (err, id, user) => {
 				userID = id;
 				userData = user;
-				awsUtils.listFiles(id, (err, files) => {
-					socket.join(id);
-					socket.emit('userData', userData);
+				socket.join(id);
+				socket.emit('userData', userData);
+
+				// Update client with list of files in root
+				awsUtils.listFiles(id, '/', (err, rootFiles) => {
+					socket.emit('userFiles', rootFiles);
 				});
 			});
 
@@ -42,6 +45,7 @@ const logger = require('./logger'),
 			});
         
 			socket.on('disconnect', () => {
+				socket.leave(userID);
 			});
 		});
 	};

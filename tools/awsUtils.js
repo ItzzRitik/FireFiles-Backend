@@ -1,5 +1,6 @@
 require('dotenv').config();
-const aws = require('aws-sdk'),
+const _ = require('lodash'),
+	aws = require('aws-sdk'),
 	awsSecrets = {
 		accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -28,17 +29,36 @@ const getSignedS3 = async (file, userID, cb) => {
 			});
 		});
 	},
+	
+	listFiles = (id, path, callback) => {
+		let prefix = _.trimStart(_.trimEnd(`${id}/${path}`, '/') + '/', '/'),
+			result = { files: [], folders: [] },
 
-	listFiles = (id, cb) => {
-		var params = { 
+			// Recursively get all files in current directory
+			fetchS3 = (error, data) => {
+				if (error) return callback(error);
+		
+				result.files = result.files.concat(_.map(data.Contents, 'Key'));
+				result.folders = result.folders.concat(_.map(data.CommonPrefixes, 'Prefix'));
+		
+				if (data.IsTruncated) {
+						S3.listObjectsV2({
+						Bucket: process.env.AWS_S3_BUCKET,
+						Delimiter: '/',
+						Prefix: prefix,
+						ContinuationToken: data.NextContinuationToken
+					}, fetchS3)
+				} else {
+					callback(null, result);
+				}
+			};
+
+		S3.listObjectsV2({
 			Bucket: process.env.AWS_S3_BUCKET,
 			Delimiter: '/',
-			Prefix: id + '/'
-		};
-		S3.listObjectsV2(params, function (err, files) {
-			if (err) return cb(err);
-			cb(null, files);
-		});
+			Prefix: prefix,
+			StartAfter: prefix // removes the folder name from the file listing
+		}, fetchS3)
 	},
 
 	streamFile = (fileKey, cb) => {
