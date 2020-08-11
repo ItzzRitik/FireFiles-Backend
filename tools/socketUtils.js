@@ -20,19 +20,14 @@ const logger = require('./logger'),
 			dbUtils.getUserData(email, '', (err, id, user) => {
 				userID = id;
 				userData = user;
-				socket.join(id);
+				socket.join(userID);
 				socket.emit('userData', userData);
-
-				// Update client with list of files in root
-				awsUtils.listFiles(id, '/', (err, rootFiles) => {
-					socket.emit('userFiles', rootFiles);
-				});
 			});
 
-			socket.on('getSignedS3', (files, cb) => {
+			socket.on('getSignedS3', (files, dir, cb) => {
 				const processFiles = async (items) => {
 					for (let item of items) {
-						item.signedS3 = await awsUtils.getSignedS3(item, userID);
+						item.signedS3 = await awsUtils.getSignedS3(item, dir, userID);
 					}
 					return items;
 				}
@@ -41,6 +36,17 @@ const logger = require('./logger'),
 				})
 				.catch(err => {
 					cb(err);
+				});
+			});
+
+			socket.on('getContent', (dir) => {
+				awsUtils.listFiles(userID, dir, (err, content) => {
+					socket.emit('setContent', dir, content);
+				});
+			});
+			socket.on('refreshContent', (dir) => {
+				awsUtils.listFiles(userID, dir, (err, content) => {
+					io.in(userID).emit('refreshContent', dir, content);
 				});
 			});
         

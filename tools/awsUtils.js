@@ -9,7 +9,7 @@ const _ = require('lodash'),
 aws.config.update(awsSecrets);
 const S3 = new aws.S3();
 	
-const getSignedS3 = async (file, userID, cb) => {
+const getSignedS3 = async (file, dir, userID) => {
 		const params = {
 			Bucket: process.env.AWS_S3_BUCKET,
 			Expires: 60,
@@ -17,7 +17,7 @@ const getSignedS3 = async (file, userID, cb) => {
 			Conditions: [['content-length-range', 100, 10000000]], // max- 10mb
 			Fields: {
 				'Content-Type': file.type,
-				'key': userID + '/' + file.name
+				'key': `${userID}/${dir === '/' ? '' : dir}${file.name}`
 			}
 		};
 
@@ -32,14 +32,22 @@ const getSignedS3 = async (file, userID, cb) => {
 	
 	listFiles = (id, path, callback) => {
 		let prefix = _.trimStart(_.trimEnd(`${id}/${path}`, '/') + '/', '/'),
-			result = { files: [], folders: [] },
+			fileList = { files: [], folders: [] },
 
 			// Recursively get all files in current directory
 			fetchS3 = (error, data) => {
 				if (error) return callback(error);
-		
-				result.files = result.files.concat(_.map(data.Contents, 'Key'));
-				result.folders = result.folders.concat(_.map(data.CommonPrefixes, 'Prefix'));
+
+				fileList.files = fileList.files.concat(_.map(data.Contents, (file) => {
+					return {
+						name: file.Key.replace(id + '/', ''),
+						lastModified: file.LastModified,
+						size: file.Size
+					}
+				}));
+				fileList.folders = fileList.folders.concat(_.map(data.CommonPrefixes, (folder) => {
+					return _.trimEnd(folder.Prefix.replace(id + '/', ''), '/');
+				}));
 		
 				if (data.IsTruncated) {
 						S3.listObjectsV2({
@@ -48,9 +56,8 @@ const getSignedS3 = async (file, userID, cb) => {
 						Prefix: prefix,
 						ContinuationToken: data.NextContinuationToken
 					}, fetchS3)
-				} else {
-					callback(null, result);
-				}
+				} 
+				else callback(null, fileList);
 			};
 
 		S3.listObjectsV2({
