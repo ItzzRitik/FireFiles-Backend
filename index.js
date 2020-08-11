@@ -22,9 +22,9 @@ const env = process.env,
 		secret: env.SESSION_KEY,
 		resave: true,
 		saveUninitialized: false,
-		sameSite: 'none',
-		maxAge: 1000 * 3600 * 24 * 30 * 2, // 2 months (ms)
-		secure: env.ENVIRONMENT !== 'dev'
+		sameSite: env.ENVIRONMENT === 'dev' ? 'lax' : 'none',
+		maxAge: 1000 * 3600 * 24 * 30 * 2,		// 2 months (ms)
+		secure: env.ENVIRONMENT !== 'dev'		// only false for `dev`, otherwise true
 	});
 
 app.enable('trust proxy');
